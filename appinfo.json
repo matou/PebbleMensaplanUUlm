@@ -4,13 +4,12 @@
         ""
     ],
     "companyName": "matthias.matousek@matou.de",
-    "longName": "Mensaplan",
+    "longName": "Mensaplan UUlm",
     "projectType": "pebblejs",
     "resources": {
         "media": [
             {
                 "file": "images/menu_icon.png",
-                "menuIcon": true,
                 "name": "IMAGE_MENU_ICON",
                 "type": "bitmap"
             },
@@ -31,13 +30,14 @@
             },
             {
                 "file": "images/food",
+                "menuIcon": true,
                 "name": "IMAGES_FOOD",
                 "type": "bitmap"
             }
         ]
     },
     "sdkVersion": "3",
-    "shortName": "Mensaplan",
+    "shortName": "Mensaplan UUlm",
     "targetPlatforms": [
         "aplite",
         "basalt",
@@ -45,7 +45,7 @@
     ],
     "uuid": "22503db0-a9cf-4fd3-af4a-33e9b74e33fc",
     "versionCode": 1,
-    "versionLabel": "1.0",
+    "versionLabel": "1.1",
     "watchapp": {
         "hiddenApp": false,
         "watchface": false

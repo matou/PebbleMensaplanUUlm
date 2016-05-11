@@ -104,14 +104,14 @@ function showPlan(facility) {
     });
   }
   
-  showItems(items);
+  showItems(items, facility);
 }
 
 
-function showItems(items) {
+function showItems(items, facility) {
   var mealMenu = new UI.Menu({
     sections: [{
-      title: 'Mensaplan',
+      title: facility,
       items: items
     }]
   });
