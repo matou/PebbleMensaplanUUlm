@@ -19,13 +19,6 @@ var facilities = {'Mensa':'Mensa',
                   'WestSideDiner':'Diner'};
 
 var facilityItems = [];
-var fkeys = Object.keys(facilities);
-
-for (var i=0; i<fkeys.length; i++) {
-  facilityItems.push({
-    title:fkeys[i]
-  });
-}
 
 
 // Display information that data is downloading
@@ -40,14 +33,33 @@ var errorCard = new UI.Card({
   body:'Could not fetch data. Internet connection?'
 });
 
+var fkeys = Object.keys(facilities);
+
+for (var i=0; i<fkeys.length; i++) {
+  facilityItems.push({
+    title:fkeys[i]
+  });
+}
+
 
 console.log('starting download');
 
 // Download dynamic mensaplan
 ajax({ url: mensaplanURL, type: 'json', async: false },
   function(data) {
-    myPlan.days = data.weeks[1].days;
-    console.log('Finished fetching dynamic data.');    
+    
+    // find the current week
+    var week = 0;
+    var weeknum = 100;
+    for (var i=0; i<data.weeks.length; i++) {
+      if (data.weeks[i].weekNumber < weeknum) {
+        week = i;
+        weeknum = data.weeks[i].weekNumber;
+      }
+    }
+    
+    myPlan.days = data.weeks[week].days;
+   // console.log('Finished fetching dynamic data.');    
   },
   function(error) {
     errorCard.show();
@@ -60,6 +72,7 @@ ajax({ url: mensaplanURL, type: 'json', async: false },
 console.log('now downloading static data');
 ajax({ url: mensaplanStaticURL, type: 'json', async: false },
   function(data) {
+    // merge static data with dynamic
     for (var i=0; i<5; i++) {
       myPlan.days[i].Burgerbar = data.weeks[0].days[i].Burgerbar;
       myPlan.days[i].Diner = data.weeks[0].days[i].Diner;
@@ -121,7 +134,8 @@ function showItems(items, facility) {
   mealMenu.on('select', function(e) {
     var detailCard = new UI.Card({
       title:items[e.itemIndex].title,
-      body:items[e.itemIndex].subtitle
+      body:items[e.itemIndex].subtitle,
+      scrollable:true
     }); 
     detailCard.show();
   });
