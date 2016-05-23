@@ -1,6 +1,6 @@
 var UI = require('ui');
-
 var ajax = require('ajax');
+var Feature = require('platform/feature');
 
 var mensaplanURL = 'https://www.uni-ulm.de/mensaplan/data/mensaplan.json';
 var mensaplanStaticURL = 'https://www.uni-ulm.de/mensaplan/data/mensaplan_static.json';
@@ -102,6 +102,7 @@ function showFacilities() {
     return;
   
   var facilityMenu = new UI.Menu({
+    highlightBackgroundColor: Feature.color('Dark Green', 'black'),
     sections: [{
       title: 'Mensa auswählen',
       items: facilityItems
@@ -135,6 +136,7 @@ function showPlan(facility) {
 
 function showItems(items, facility) {
   var mealMenu = new UI.Menu({
+    highlightBackgroundColor: Feature.color('Dark Green', 'black'),
     sections: [{
       title: facility,
       items: items
