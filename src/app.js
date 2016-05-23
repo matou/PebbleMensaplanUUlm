@@ -5,6 +5,9 @@ var ajax = require('ajax');
 var mensaplanURL = 'https://www.uni-ulm.de/mensaplan/data/mensaplan.json';
 var mensaplanStaticURL = 'https://www.uni-ulm.de/mensaplan/data/mensaplan_static.json';
 
+var fetchedStatic = false;
+var fetchedDynamic = false;
+
 var myPlan = {};
 
 var today = new Date();
@@ -20,13 +23,12 @@ var facilities = {'Mensa':'Mensa',
 
 var facilityItems = [];
 
-
 // Display information that data is downloading
-var card = new UI.Card({
+var loadingCard = new UI.Card({
   title:'Mensaplan',
   subtitle:'\nFetching data...'
 });
-card.show();
+loadingCard.show();
 
 var errorCard = new UI.Card({ 
   title:'Error',
@@ -45,7 +47,7 @@ for (var i=0; i<fkeys.length; i++) {
 console.log('starting download');
 
 // Download dynamic mensaplan
-ajax({ url: mensaplanURL, type: 'json', async: false },
+ajax({ url: mensaplanURL, type: 'json' }, 
   function(data) {
     
     // find the current week
@@ -59,35 +61,45 @@ ajax({ url: mensaplanURL, type: 'json', async: false },
     }
     
     myPlan.days = data.weeks[week].days;
-   // console.log('Finished fetching dynamic data.');    
+    fetchedDynamic = true;
+    console.log('fetched dynamic data');
+    showFacilities();
   },
   function(error) {
     errorCard.show();
-    card.hide();
+    loadingCard.hide();
     console.log('Failed fetching mensaplan data: ' + error);
   }
 );
 
 // Download static mensaplan
 console.log('now downloading static data');
-ajax({ url: mensaplanStaticURL, type: 'json', async: false },
+ajax({ url: mensaplanStaticURL, type: 'json' },
   function(data) {
     // merge static data with dynamic
     for (var i=0; i<5; i++) {
       myPlan.days[i].Burgerbar = data.weeks[0].days[i].Burgerbar;
       myPlan.days[i].Diner = data.weeks[0].days[i].Diner;
     }
+    fetchedStatic = true;
+    console.log('fetched static data');
+    showFacilities();
   },
   function(error) {
     errorCard.show();
-    card.hide();
+    loadingCard.hide();
     console.log('Failed fetching static mensaplan data: ' + error);
   } 
 );
 
-showFacilities();
 
 function showFacilities() {
+  console.log('static data present: ' + fetchedStatic);
+  console.log('dynamic data present: ' + fetchedDynamic);
+  
+  // Are we ready to display the plan (i.e. all data fetched)?
+  if (!fetchedStatic || !fetchedDynamic) 
+    return;
   
   var facilityMenu = new UI.Menu({
     sections: [{
@@ -96,7 +108,7 @@ function showFacilities() {
     }]
   });
   facilityMenu.show();
-  card.hide();
+  loadingCard.hide();
   
   facilityMenu.on('select', function(e) {
     showPlan(facilities[fkeys[e.itemIndex]]);
